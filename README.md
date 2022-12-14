@@ -1,4 +1,6 @@
-Statically link a SQLite extension written in Rust to a WASM build of SQLite.
+Exploratory work to statically link a SQLite extension written in Rust to a WASM build of SQLite.
+
+Kicked off by this issue: https://github.com/asg017/sqlite-loadable-rs/issues/5
 
 - `js/example/` contains an example app that uses the built wasm
 - `wa-sqlite/` is our wasm port of SQLite
