@@ -31,3 +31,13 @@ Yes. You can test that `testext_commit_hook` is being called by flipping the ret
 In that case, the demo app fails because the transaction is aborted.
 
 Flipping it back to 0 and recompiling and everything works as expected.
+
+# How is it done?
+
+The Rust code is [compiled to LLVM bitcode against a wasm-unknown-unknown target](https://github.com/rhashimoto/wa-sqlite/blob/22985f93bcff1b435a7355962812619ec89a3b20/Makefile#LL216).
+
+```
+RUSTFLAGS="--emit=llvm-bc" cargo build --target wasm32-unknown-unknown
+```
+
+This bitcode is then able to be [linked by emscripten to the broader SQLite WASM bundle](https://github.com/rhashimoto/wa-sqlite/blob/22985f93bcff1b435a7355962812619ec89a3b20/Makefile#L256).
