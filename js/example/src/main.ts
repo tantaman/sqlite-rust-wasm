@@ -27,4 +27,9 @@ const db = await sqlite3.open_v2(
 
 const sql = tag(sqlite3, db);
 
-console.log(await sql`SELECT * FROM sqlite_master`);
+console.log(await sql`BEGIN`);
+console.log(await sql`CREATE TABLE foo (a)`);
+console.log(await sql`INSERT INTO foo VALUES (1)`);
+console.log(await sql`COMMIT`);
+
+console.log(await sql`SELECT * FROM foo`);

@@ -23,3 +23,11 @@ cd js
 pnpm install
 pnpm start
 ```
+
+# Is it actually doing anything?
+
+Yes. You can test that `testext_commit_hook` is being called by flipping the return value to 1.
+
+In that case, the demo app fails because the transaction is aborted.
+
+Flipping it back to 0 and recompiling and everything works as expected.
