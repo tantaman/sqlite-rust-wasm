@@ -28,7 +28,7 @@ pub extern "C" fn testext_fn(
 }
 
 #[no_mangle]
-pub extern "C" fn sqlite3_test_runtime_ext_init(
+pub extern "C" fn sqlite3_testruntimeext_init(
     db: *mut sqlite3,
     _errMsg: *mut *mut c_char,
     api: *mut sqlite3_api_routines,

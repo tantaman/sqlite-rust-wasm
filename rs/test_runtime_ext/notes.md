@@ -38,4 +38,25 @@ Packing files into the fs:
 https://emscripten.org/docs/porting/files/packaging_files.html#packaging-files
 https://github.com/emscripten-core/emscripten/blob/main/tools/file_packager.py
 
-~/workspace/emsdk/upstream/emscripten/tools/file_packager ../../js/example/public/pkg --preload ./target/wasm32-unknown-emscripten/debug/test_runtime_ext.wasm > ../../js/example/public/load.js
+~/workspace/emsdk/upstream/emscripten/tools/file_packager ../../js/example/public/test_runtime_ext.so --use-preload-plugins --preload ./target/wasm32-unknown-emscripten/release/test_runtime_ext.so --no-node > ../../js/example/public/load.js
+
+```
+'v': void type
+
+'i': 32-bit integer type
+
+'j': 64-bit integer type (currently does not exist in JavaScript)
+
+'f': 32-bit float type
+
+'d': 64-bit float type
+```
+
+https://github.com/emscripten-core/emscripten/issues/12268
+-s ERROR_ON_UNDEFINED_SYMBOLS=0 ?
+
+/_
+if (!flags.allowUndefined) {
+_/
+
+does it work with asyncify?

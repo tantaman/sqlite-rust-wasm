@@ -28,14 +28,13 @@ const db = await sqlite3.open_v2(
 
 const sql = tag(sqlite3, db);
 
-// console.log(await sql`BEGIN`);
 console.log(await sql`CREATE TABLE foo (a)`);
 console.log(await sql`INSERT INTO foo VALUES (1)`);
-// console.log(await sql`COMMIT`);
 
 console.log(await sql`SELECT * FROM foo`);
 console.log(
-  await sql`SELECT load_extension('/target/wasm32-unknown-emscripten/debug/test_runtime_ext.wasm');`
+  await sql`SELECT load_extension('/target/wasm32-unknown-emscripten/release/test_runtime_ext.so');`
 );
+console.log(await sql`SELECT testext_fn()`);
 
 (window as any).sql = sql;
