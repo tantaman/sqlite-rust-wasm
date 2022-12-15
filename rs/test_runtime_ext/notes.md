@@ -18,3 +18,24 @@ RUSTFLAGS="--emit=llvm-bc" cargo build --target wasm32-unknown-unknown
 ```
 RUSTFLAGS="--emit=llvm-bc" cargo build -Z build-std=panic_abort,std --target wasm32-unknown-unknown
 ```
+
+as side module from rust using emscripten target:
+https://www.hellorust.com/setup/emscripten/
+https://github.com/rust-lang/rust/issues/98155
+
+```
+rustup target add wasm32-unknown-emscripten
+link-arg=-sSIDE_MODULE=2 --target wasm32-unknown-emscripten --crate-type cdylib
+
+RUSTFLAGS="-C link-arg=-sSIDE_MODULE=2" cargo build --target wasm32-unknown-emscripten
+
+// release build that seems to work:
+RUSTFLAGS="-C link-arg=-sSIDE_MODULE=2 -Zlink-native-libraries=no" cargo build --release --target wasm32-unknown-emscripten
+// from: https://github.com/rust-lang/rust/pull/98303
+```
+
+Packing files into the fs:
+https://emscripten.org/docs/porting/files/packaging_files.html#packaging-files
+https://github.com/emscripten-core/emscripten/blob/main/tools/file_packager.py
+
+~/workspace/emsdk/upstream/emscripten/tools/file_packager ../../js/example/public/pkg --preload ./target/wasm32-unknown-emscripten/debug/test_runtime_ext.wasm > ../../js/example/public/load.js
