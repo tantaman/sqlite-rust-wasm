@@ -38,6 +38,8 @@ Flipping it back to 0 and recompiling and everything works as expected.
 
 The Rust code is [compiled to LLVM bitcode against a wasm-unknown-unknown target](https://github.com/vlcn-io/wa-sqlite/blob/fe19e3377a2a66d6ab679a2afa903ca781644dc7/Makefile#L218).
 
+nit: probably doable by packaging into a single `.a` file targeting `wasm32-unkown-unknown` -- to test.
+
 ```
 RUSTFLAGS="--emit=llvm-bc" cargo build --target wasm32-unknown-unknown
 ```
