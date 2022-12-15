@@ -1,6 +1,6 @@
 [submodule "wa-sqlite"]
 	path = wa-sqlite
-	url = git@github.com:rhashimoto/wa-sqlite.git
+	url = git@github.com:vlcn-io/wa-sqlite.git
 [submodule "rs/sqlite-loadable-rs"]
 	path = rs/sqlite-loadable-rs
 	url = git@github.com:tantaman/sqlite-loadable-rs.git
