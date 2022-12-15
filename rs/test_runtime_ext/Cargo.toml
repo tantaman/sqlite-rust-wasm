@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "test_runtime_extension"
+name = "test_runtime_ext"
 crate-type = ["cdylib"]
 
 [dependencies]
