@@ -14,3 +14,7 @@ https://github.com/asg017/sqlite-loadable-rs/blob/main/src/ext.rs
 ```
 RUSTFLAGS="--emit=llvm-bc" cargo build --target wasm32-unknown-unknown
 ```
+
+```
+RUSTFLAGS="--emit=llvm-bc" cargo build -Z build-std=panic_abort,std --target wasm32-unknown-unknown
+```
