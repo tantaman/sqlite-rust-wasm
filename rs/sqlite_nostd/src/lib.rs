@@ -1,6 +1,9 @@
 #![no_std]
 #![allow(non_snake_case)]
 
+extern crate alloc;
+
+use alloc::ffi::{CString, NulError};
 use core::ffi::{c_char, c_int, c_uchar, c_void, CStr};
 use core::str::Utf8Error;
 use sqlite3_capi::bindings;
@@ -70,13 +73,12 @@ pub fn result_null(context: *mut bindings::sqlite3_context) {
     unsafe { sqlite3_capi::result_null(context) };
 }
 
-// pub fn result_error(context: *mut bindings::sqlite3_context, text: &str) -> Result<(), Error> {
-//     let s = CStr::new(text.as_bytes())?;
-//     let n = text.len() as i32;
-
-//     unsafe { sqlite3_capi::result_error(context, s.into_raw(), n) };
-//     Ok(())
-// }
+pub fn result_error(context: *mut bindings::sqlite3_context, text: &str) -> Result<(), NulError> {
+    CString::new(text.as_bytes()).map(|s| {
+        let n = text.len() as i32;
+        unsafe { sqlite3_capi::result_error(context, s.into_raw(), n) };
+    })
+}
 
 pub fn result_error_code(context: *mut bindings::sqlite3_context, code: i32) {
     unsafe { sqlite3_capi::result_error_code(context, code) };
