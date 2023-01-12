@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "sqlite_nostd"
+name = "sqlite3_capi"
 crate-type = ["rlib"]
 
 [dependencies]
