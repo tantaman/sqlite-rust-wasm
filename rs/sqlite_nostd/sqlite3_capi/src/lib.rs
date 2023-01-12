@@ -22,6 +22,21 @@ pub fn SQLITE_EXTENSION_INIT2(api: *mut bindings::sqlite3_api_routines) {
 static EXPECT_MESSAGE: &str =
     "sqlite-loadable error: expected method on SQLITE3_API. Please file an issue";
 
+pub unsafe fn malloc(size: usize) -> *mut u8 {
+    if usize::BITS == 64 {
+        let ptr =
+            ((*SQLITE3_API).malloc64.expect(EXPECT_MESSAGE))(size as bindings::sqlite3_uint64);
+        ptr as *mut u8
+    } else {
+        let ptr = ((*SQLITE3_API).malloc.expect(EXPECT_MESSAGE))(size as i32);
+        ptr as *mut u8
+    }
+}
+
+pub unsafe fn free(ptr: *mut u8) {
+    ((*SQLITE3_API).free.expect(EXPECT_MESSAGE))(ptr as *mut c_void);
+}
+
 pub unsafe fn value_text(arg1: *mut bindings::sqlite3_value) -> *const c_uchar {
     if SQLITE3_API.is_null() {
         return bindings::sqlite3_value_text(arg1);

@@ -1,6 +1,7 @@
 #![no_std]
 #![allow(non_snake_case)]
 
+// Users of the bindings should include alloc and configure it with sqlite3_allocator
 extern crate alloc;
 
 use alloc::ffi::{CString, NulError};
