@@ -2,12 +2,11 @@
 name = "sqlite_nostd"
 version = "0.1.0"
 edition = "2021"
-
-[lib]
-name = "sqlite_nostd"
-crate-type = ["rlib"]
+authors = ["Matt Wonlaw"]
+description = "Minimal bindings for SQLite3 that do not require std"
+keywords = ["sqlite"]
+license = "MIT"
 
 [dependencies]
+sqlite3_capi = {version="0.1.0", path="./sqlite3_capi"}
 
-[build-dependencies]
-bindgen = "0.63.0"
