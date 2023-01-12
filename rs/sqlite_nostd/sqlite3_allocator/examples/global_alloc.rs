@@ -3,8 +3,8 @@
 
 extern crate alloc;
 
-// #[global_allocator]
-// static ALLOCATOR: SQLite3Allocator = SQLite3Allocator {};
+#[global_allocator]
+static ALLOCATOR: SQLite3Allocator = SQLite3Allocator {};
 
 #[entry]
 fn main() -> ! {

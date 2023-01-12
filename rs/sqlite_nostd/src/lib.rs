@@ -5,7 +5,7 @@
 extern crate alloc;
 
 use alloc::ffi::{CString, NulError};
-use core::ffi::{c_char, c_int, c_uchar, c_void, CStr};
+use core::ffi::{c_int, c_void};
 use core::str::Utf8Error;
 use sqlite3_capi::bindings;
 
@@ -21,6 +21,10 @@ impl Error {
             ErrorKind::ERROR(code) => code,
         }
     }
+}
+
+pub fn init(api: *mut bindings::sqlite3_api_routines) {
+    sqlite3_capi::SQLITE_EXTENSION_INIT2(api);
 }
 
 pub fn value_bytes(value: *mut bindings::sqlite3_value) -> i32 {

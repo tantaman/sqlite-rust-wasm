@@ -7,10 +7,6 @@ description = "Minimal bindings for SQLite3 that do not require std"
 keywords = ["sqlite"]
 license = "MIT"
 
-[lib]
-name = "sqlite_nostd"
-crate-type = ["rlib"]
-
 [dependencies]
-sqlite3_capi = { path="./sqlite3_capi"}
+sqlite_notsd = { path="../"}
 
