@@ -6,8 +6,12 @@ extern crate alloc;
 
 use alloc::ffi::{CString, NulError};
 use core::ffi::{c_int, c_void};
-use core::str::Utf8Error;
 use sqlite3_capi::bindings;
+
+pub use sqlite3_capi;
+pub use sqlite3_capi::bindings::{
+    sqlite3, sqlite3_api_routines, sqlite3_context, sqlite3_value, SQLITE_OK, SQLITE_UTF8,
+};
 
 pub struct Error(ErrorKind);
 
@@ -27,6 +31,7 @@ pub fn init(api: *mut bindings::sqlite3_api_routines) {
     sqlite3_capi::SQLITE_EXTENSION_INIT2(api);
 }
 
+// TODO: do we need this double-wrapping or can we just push all this down into sqlite_capi?
 pub fn value_bytes(value: *mut bindings::sqlite3_value) -> i32 {
     unsafe { sqlite3_capi::value_bytes(value) }
 }
@@ -37,11 +42,11 @@ pub fn value_blob<'a>(value: *mut bindings::sqlite3_value) -> &'a [u8] {
     return unsafe { core::slice::from_raw_parts(b.cast::<u8>(), n as usize) };
 }
 
-pub fn value_text<'a>(value: *mut bindings::sqlite3_value) -> Result<&'a str, Utf8Error> {
+pub fn value_text<'a>(value: *mut bindings::sqlite3_value) -> &'a str {
     let len = value_bytes(value);
     let bytes = unsafe { sqlite3_capi::value_text(value) };
     let slice = unsafe { core::slice::from_raw_parts(bytes as *const u8, len as usize) };
-    core::str::from_utf8(slice)
+    unsafe { core::str::from_utf8_unchecked(slice) }
 }
 
 pub fn value_int(value: *mut bindings::sqlite3_value) -> i32 {
@@ -69,7 +74,6 @@ pub fn result_double(context: *mut bindings::sqlite3_context, i: f64) {
 }
 
 pub fn result_blob(context: *mut bindings::sqlite3_context, blob: &[u8]) {
-    // TODO try_into(), err on too big (check against limit? idk)
     let len = blob.len() as c_int;
     unsafe { sqlite3_capi::result_blob(context, blob.as_ptr().cast::<c_void>(), len) };
 }
@@ -81,7 +85,10 @@ pub fn result_null(context: *mut bindings::sqlite3_context) {
 pub fn result_error(context: *mut bindings::sqlite3_context, text: &str) -> Result<(), NulError> {
     CString::new(text.as_bytes()).map(|s| {
         let n = text.len() as i32;
-        unsafe { sqlite3_capi::result_error(context, s.into_raw(), n) };
+        let ptr = s.as_ptr();
+        unsafe {
+            sqlite3_capi::result_error(context, ptr, n);
+        };
     })
 }
 
@@ -96,3 +103,25 @@ pub fn result_bool(context: *mut bindings::sqlite3_context, value: bool) {
         result_int(context, 0)
     }
 }
+
+// https://github.com/asg017/sqlite-loadable-rs/blob/main/src/scalar.rs#L94
+// type Function =
+//     unsafe extern "C" fn(*mut bindings::sqlite3_context, c_int, *mut *mut bindings::sqlite3_value);
+
+// // compiler generated strings -- https://stackoverflow.com/questions/53611161/how-do-i-expose-a-compile-time-generated-static-c-string-through-ffi
+// pub fn create_function_v2(
+//     db: *mut bindings::sqlite3,
+//     name: *const c_char,
+//     argc: i32,
+//     flags: i32,
+//     p_app: *mut c_void,
+//     x_func: F,
+//     x_step: Option<S>,
+//     x_final: Option<Final>,
+//     destroy: Option<Destroy>,
+// ) {
+//     // Cstring.as_ptr?
+//     // sqlite3_capi::create_function_v2(
+//     //     db, name, argc, text_rep, p_app, x_func, x_step, x_final, destroy,
+//     // );
+// }

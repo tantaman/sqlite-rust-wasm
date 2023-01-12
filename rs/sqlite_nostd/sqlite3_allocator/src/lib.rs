@@ -1,6 +1,6 @@
 #![no_std]
 use core::alloc::{GlobalAlloc, Layout};
-struct SQLite3Allocator {}
+pub struct SQLite3Allocator {}
 
 unsafe impl GlobalAlloc for SQLite3Allocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
