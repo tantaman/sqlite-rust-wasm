@@ -13,7 +13,7 @@ use core::ptr;
 // macro emulation: https://github.com/asg017/sqlite-loadable-rs/blob/main/src/ext.rs
 static mut SQLITE3_API: *mut bindings::sqlite3_api_routines = ptr::null_mut();
 
-pub fn SQLITE_EXTENSION_INIT2(api: *mut bindings::sqlite3_api_routines) {
+pub fn EXTENSION_INIT2(api: *mut bindings::sqlite3_api_routines) {
     unsafe {
         SQLITE3_API = api;
     }
@@ -22,31 +22,35 @@ pub fn SQLITE_EXTENSION_INIT2(api: *mut bindings::sqlite3_api_routines) {
 static EXPECT_MESSAGE: &str =
     "sqlite-loadable error: expected method on SQLITE3_API. Please file an issue";
 
-pub unsafe fn malloc(size: usize) -> *mut u8 {
-    if usize::BITS == 64 {
-        let ptr =
-            ((*SQLITE3_API).malloc64.expect(EXPECT_MESSAGE))(size as bindings::sqlite3_uint64);
-        ptr as *mut u8
-    } else {
-        let ptr = ((*SQLITE3_API).malloc.expect(EXPECT_MESSAGE))(size as i32);
-        ptr as *mut u8
+pub fn malloc(size: usize) -> *mut u8 {
+    unsafe {
+        if usize::BITS == 64 {
+            let ptr =
+                ((*SQLITE3_API).malloc64.expect(EXPECT_MESSAGE))(size as bindings::sqlite3_uint64);
+            ptr as *mut u8
+        } else {
+            let ptr = ((*SQLITE3_API).malloc.expect(EXPECT_MESSAGE))(size as i32);
+            ptr as *mut u8
+        }
     }
 }
 
-pub unsafe fn free(ptr: *mut u8) {
-    ((*SQLITE3_API).free.expect(EXPECT_MESSAGE))(ptr as *mut c_void);
+pub fn free(ptr: *mut u8) {
+    unsafe {
+        ((*SQLITE3_API).free.expect(EXPECT_MESSAGE))(ptr as *mut c_void);
+    }
 }
 
-pub unsafe fn value_text(arg1: *mut bindings::sqlite3_value) -> *const c_uchar {
-    ((*SQLITE3_API).value_text.expect(EXPECT_MESSAGE))(arg1)
+pub fn value_text(arg1: *mut bindings::sqlite3_value) -> *const c_uchar {
+    unsafe { ((*SQLITE3_API).value_text.expect(EXPECT_MESSAGE))(arg1) }
 }
 
-pub unsafe fn value_type(value: *mut bindings::sqlite3_value) -> i32 {
-    ((*SQLITE3_API).value_type.expect(EXPECT_MESSAGE))(value)
+pub fn value_type(value: *mut bindings::sqlite3_value) -> i32 {
+    unsafe { ((*SQLITE3_API).value_type.expect(EXPECT_MESSAGE))(value) }
 }
 
-pub unsafe fn value_bytes(arg1: *mut bindings::sqlite3_value) -> i32 {
-    ((*SQLITE3_API).value_bytes.expect(EXPECT_MESSAGE))(arg1)
+pub fn value_bytes(arg1: *mut bindings::sqlite3_value) -> i32 {
+    unsafe { ((*SQLITE3_API).value_bytes.expect(EXPECT_MESSAGE))(arg1) }
 }
 
 pub unsafe fn value_blob(arg1: *mut bindings::sqlite3_value) -> *const c_void {

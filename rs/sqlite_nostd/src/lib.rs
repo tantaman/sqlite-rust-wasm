@@ -28,23 +28,18 @@ impl Error {
 }
 
 pub fn init(api: *mut bindings::sqlite3_api_routines) {
-    sqlite3_capi::SQLITE_EXTENSION_INIT2(api);
-}
-
-// TODO: do we need this double-wrapping or can we just push all this down into sqlite_capi?
-pub fn value_bytes(value: *mut bindings::sqlite3_value) -> i32 {
-    unsafe { sqlite3_capi::value_bytes(value) }
+    sqlite3_capi::EXTENSION_INIT2(api);
 }
 
 pub fn value_blob<'a>(value: *mut bindings::sqlite3_value) -> &'a [u8] {
-    let n = value_bytes(value);
+    let n = sqlite3_capi::value_bytes(value);
     let b = unsafe { sqlite3_capi::value_blob(value) };
     return unsafe { core::slice::from_raw_parts(b.cast::<u8>(), n as usize) };
 }
 
 pub fn value_text<'a>(value: *mut bindings::sqlite3_value) -> &'a str {
-    let len = value_bytes(value);
-    let bytes = unsafe { sqlite3_capi::value_text(value) };
+    let len = sqlite3_capi::value_bytes(value);
+    let bytes = sqlite3_capi::value_text(value);
     let slice = unsafe { core::slice::from_raw_parts(bytes as *const u8, len as usize) };
     unsafe { core::str::from_utf8_unchecked(slice) }
 }
